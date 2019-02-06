@@ -9,6 +9,7 @@ import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ToggleButton;
 
 import java.util.Objects;
@@ -50,6 +51,14 @@ public class CreateNoteActivity extends AppCompatActivity {
         if (checkBundle()) setNote();
     }
 
+    public void hideKeyboard() {
+        View view = findViewById(android.R.id.content);
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     private void initListeners() {
         mFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,7 +76,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                     mRedButton.setChecked(false);
                     mGreenButton.setChecked(false);
                 }
-
+                hideKeyboard();
             }
         });
 
@@ -80,6 +89,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                     mYellowButton.setChecked(false);
                     mGreenButton.setChecked(false);
                 }
+                hideKeyboard();
             }
         });
 
@@ -92,6 +102,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                     mYellowButton.setChecked(false);
                     mRedButton.setChecked(false);
                 }
+                hideKeyboard();
             }
         });
 
@@ -103,6 +114,7 @@ public class CreateNoteActivity extends AppCompatActivity {
                     mYellowButton.setChecked(false);
                     mGreenButton.setChecked(false);
                 }
+                hideKeyboard();
             }
         });
     }

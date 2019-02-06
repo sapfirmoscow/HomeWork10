@@ -1,7 +1,6 @@
 package ru.sberbank.homework10_second;
 
 import android.annotation.SuppressLint;
-import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.ContentObserver;
 import android.database.Cursor;
@@ -33,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + NOTE_TABLE);
 
 
-    private static final String DATABASE_NAME = "notes";
     private FloatingActionButton mFloatingActionButton;
     private RecyclerView mRecyclerView;
     private MyAdapter mMyAdapter;
@@ -170,7 +168,9 @@ public class MainActivity extends AppCompatActivity {
     private void deleteNote(Note note) {
         new Thread(() -> {
          //   mNoteDB.getNoteDAO().deleteById(note.getId());
-            getContentResolver().delete(CONTENT_URI, String.valueOf(note.getId()), null);
+            String id = String.valueOf(note.getId());
+            Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + NOTE_TABLE + "/" + id);
+            getContentResolver().delete(CONTENT_URI, "id" + "=\"" + id + "\"", null);
             downloadNotes();
         }).start();
     }
@@ -195,6 +195,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-       // getContentResolver().unregisterContentObserver(mContentObserver); Если мы хотим чтобы изменения прилетали даже когда открыто первое приложение
+        // getContentResolver().unregisterContentObserver(mContentObserver); Если мы хотим чтобы изменения прилетали даже когда приложение свернуто
     }
 }

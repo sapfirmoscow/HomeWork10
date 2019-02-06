@@ -1,7 +1,6 @@
 package ru.sberbank.homework10.cp;
 
 import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomSQLiteQuery;
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
@@ -11,10 +10,8 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import java.net.URI;
-
 import ru.sberbank.homework10.db.NoteDB;
-import ru.sberbank.homework10.model.Note;
+import ru.sberbank.homework10.util.ConvertUtils;
 
 public class MyContentProvider extends ContentProvider {
 
@@ -24,14 +21,15 @@ public class MyContentProvider extends ContentProvider {
     public static final String NOTE_TABLE = "Note";
     public static final Uri CONTENT_URI = Uri.parse("content://" + AUTHORITY + "/" + NOTE_TABLE);
 
-    public static final UriMatcher sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+    public static final UriMatcher sURIMatcher;
     public static final int NOTES = 1;
     public static final int NOTE_ID = 2;
 
 
     static {
+        sURIMatcher = new UriMatcher(UriMatcher.NO_MATCH);
         sURIMatcher.addURI(AUTHORITY,NOTE_TABLE,NOTES);
-        sURIMatcher.addURI(AUTHORITY, "note" + "/#", NOTE_ID);
+        sURIMatcher.addURI(AUTHORITY, "Note/#", NOTE_ID);
     }
 
 
@@ -42,7 +40,7 @@ public class MyContentProvider extends ContentProvider {
     public boolean onCreate() {
         mDatabase = Room.databaseBuilder(getContext(),NoteDB.class,DATABASE_NAME).build();
         mDAO = new DaoImpl(mDatabase);
-        return mDatabase != null ? true : false;
+        return mDatabase != null;
     }
 
     @Nullable
@@ -82,7 +80,7 @@ public class MyContentProvider extends ContentProvider {
                     throw new IllegalArgumentException("Uknown URI");
         }
         getContext().getContentResolver().notifyChange(uri,null);
-        return Uri.parse("note/" + id);
+        return Uri.parse("Note/" + id);
 
 
     }
@@ -92,7 +90,7 @@ public class MyContentProvider extends ContentProvider {
         int uriType = sURIMatcher.match(uri);
         int rowsDeleted = 0;
         switch (uriType){
-            case NOTES:
+            case NOTE_ID:
                 String id = uri.getLastPathSegment();
                 rowsDeleted =mDAO.deleteNoteByid(Integer.valueOf(id));
                 break;

@@ -1,9 +1,9 @@
 package ru.sberbank.homework10;
 
 import android.annotation.SuppressLint;
-import android.arch.persistence.room.Room;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -19,10 +19,9 @@ import android.view.View;
 
 import java.util.List;
 
-import ru.sberbank.homework10.cp.ConvertUtils;
 import ru.sberbank.homework10.cp.MyContentProvider;
-import ru.sberbank.homework10.db.NoteDB;
 import ru.sberbank.homework10.model.Note;
+import ru.sberbank.homework10.util.ConvertUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private MyAdapter mMyAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private NoteDB mNoteDB;
+    // private NoteDB mNoteDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,13 +39,13 @@ public class MainActivity extends AppCompatActivity {
         initView();
         initListeners();
         initRecyclerView();
-        initRoom();
+        //initRoom();
 
         downloadNotes();
     }
 
     private void initRoom() {
-        mNoteDB = Room.databaseBuilder(getApplicationContext(), NoteDB.class, DATABASE_NAME).allowMainThreadQueries().build();
+        // mNoteDB = Room.databaseBuilder(getApplicationContext(), NoteDB.class, DATABASE_NAME).allowMainThreadQueries().build();
 
     }
 
@@ -160,7 +159,10 @@ public class MainActivity extends AppCompatActivity {
 
     private void deleteNote(Note note) {
         new Thread(() -> {
-            mNoteDB.getNoteDAO().deleteById(note.getId());
+            //mNoteDB.getNoteDAO().deleteById(note.getId());
+            String id = String.valueOf(note.getId());
+            Uri CONTENT_URI = Uri.parse("content://" + MyContentProvider.AUTHORITY + "/" + MyContentProvider.NOTE_TABLE + "/" + id);
+            getContentResolver().delete(CONTENT_URI, "id" + "=\"" + id + "\"", null);
             downloadNotes();
         }).start();
     }

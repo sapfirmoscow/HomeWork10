@@ -1,4 +1,4 @@
-package ru.sberbank.homework10.cp;
+package ru.sberbank.homework10.util;
 
 import android.content.ContentValues;
 import android.database.Cursor;
